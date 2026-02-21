@@ -26,21 +26,32 @@ const navItems = [
   { to: '/analytics', label: 'Analytics', icon: BarChart3 }
 ];
 
+const navAccess = {
+  '/dashboard': ['Fleet Manager', 'Dispatcher', 'Safety Officer', 'Financial Analyst'],
+  '/vehicles': ['Fleet Manager', 'Dispatcher', 'Safety Officer', 'Financial Analyst'],
+  '/trips': ['Fleet Manager', 'Dispatcher', 'Safety Officer', 'Financial Analyst'],
+  '/maintenance': ['Fleet Manager', 'Safety Officer', 'Financial Analyst'],
+  '/expenses': ['Fleet Manager', 'Financial Analyst'],
+  '/drivers': ['Fleet Manager', 'Dispatcher', 'Safety Officer', 'Financial Analyst'],
+  '/analytics': ['Fleet Manager', 'Financial Analyst']
+};
+
 const AppLayout = () => {
   const location = useLocation();
   const { user, logout } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const [collapsed, setCollapsed] = useState(false);
+  const allowedNavItems = navItems.filter((item) => navAccess[item.to]?.includes(user?.role));
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-100 via-indigo-50 to-cyan-50 px-4 py-5 transition-colors duration-300 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950">
-      <div className="pointer-events-none absolute -top-24 left-1/3 h-72 w-72 rounded-full bg-fuchsia-400/15 blur-3xl dark:bg-fuchsia-700/20" />
-      <div className="pointer-events-none absolute bottom-0 right-0 h-80 w-80 rounded-full bg-cyan-400/15 blur-3xl dark:bg-indigo-600/20" />
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#f7ead6] via-[#e0c39b] to-[#c89f70] px-4 py-5 transition-colors duration-300 dark:from-[#040913] dark:via-[#071227] dark:to-[#0c1d37]">
+      <div className="pointer-events-none absolute -top-24 left-1/3 h-72 w-72 rounded-full bg-fleet-tan/45 blur-3xl dark:bg-fleet-oxford/45" />
+      <div className="pointer-events-none absolute bottom-0 right-0 h-80 w-80 rounded-full bg-fleet-oxford/25 blur-3xl dark:bg-fleet-tanVivid/20" />
 
       <div className="relative mx-auto grid max-w-[1500px] grid-cols-1 gap-4 lg:grid-cols-[auto_1fr]">
-        <Sidebar items={navItems} collapsed={collapsed} onToggle={() => setCollapsed((prev) => !prev)} />
+        <Sidebar items={allowedNavItems} collapsed={collapsed} onToggle={() => setCollapsed((prev) => !prev)} />
 
-        <section className="space-y-4">
+        <section className="space-y-6">
           <Navbar role={user?.role || 'User'} isDark={isDark} onToggleTheme={toggleTheme} onLogout={logout} />
           <AnimatePresence mode="wait">
             <motion.main

@@ -33,7 +33,7 @@ const Table = ({
 
   return (
     <Card className="overflow-hidden p-0" glow>
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/70 p-4 dark:border-slate-700/70">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-fleet-tan/60 p-4 dark:border-slate-700/70">
         <div>
           <h3 className="text-sm font-semibold text-slate-900 dark:text-white">{title}</h3>
           {description && <p className="text-xs text-slate-500 dark:text-slate-400">{description}</p>}
@@ -42,7 +42,7 @@ const Table = ({
           <div className="relative">
             <LuSearch className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
-              className="h-10 w-64 rounded-xl border border-slate-200 bg-white/80 pl-9 pr-3 text-sm outline-none transition focus:border-indigo-400 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-100"
+              className="h-10 w-64 rounded-xl border border-fleet-tan/70 bg-fleet-cream/80 pl-9 pr-3 text-sm outline-none transition focus:border-fleet-oxford dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-100 dark:focus:border-fleet-tanVivid"
               placeholder="Search records..."
               value={query}
               onChange={(event) => {
@@ -97,7 +97,7 @@ const Table = ({
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -6 }}
-                    className="border-t border-slate-200/70 transition hover:bg-indigo-50/60 dark:border-slate-700/60 dark:hover:bg-slate-800/70"
+                    className="border-t border-fleet-tan/50 transition hover:bg-fleet-tan/20 dark:border-slate-700/60 dark:hover:bg-slate-800/70"
                   >
                     {columns.map((column) => (
                       <td key={`${getRowId(row)}-${column.key}`} className="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">
@@ -112,7 +112,7 @@ const Table = ({
         </div>
       )}
 
-      <div className="flex items-center justify-between border-t border-slate-200/70 p-4 text-xs text-slate-500 dark:border-slate-700/70 dark:text-slate-400">
+      <div className="flex items-center justify-between border-t border-fleet-tan/60 p-4 text-xs text-slate-500 dark:border-slate-700/70 dark:text-slate-400">
         <span>
           Showing {pageRows.length} of {filteredRows.length} records
         </span>

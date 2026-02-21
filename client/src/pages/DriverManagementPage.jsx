@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import Loader from '../components/Loader';
+import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import Button from '../components/ui/Button';
 import StatusBadge from '../components/ui/StatusBadge';
@@ -9,9 +10,11 @@ import Table from '../components/ui/Table';
 
 const DriverManagementPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const toast = useToast();
   const [drivers, setDrivers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const canManageDrivers = user?.role === 'Fleet Manager' || user?.role === 'Safety Officer';
 
   const fetchDrivers = async () => {
     setLoading(true);
@@ -44,7 +47,7 @@ const DriverManagementPage = () => {
           <h1 className="section-title">Driver Management</h1>
           <p className="section-subtitle">Compliance status, safety score and trip readiness</p>
         </div>
-        <Button onClick={() => navigate('/drivers/create')}>Add Driver</Button>
+        {canManageDrivers ? <Button onClick={() => navigate('/drivers/create')}>Add Driver</Button> : null}
       </div>
 
       {loading && <Loader text="Loading drivers" />}
@@ -59,15 +62,19 @@ const DriverManagementPage = () => {
           { key: 'status', label: 'Status', render: (row) => <StatusBadge status={row.status} /> },
           { key: 'safetyScore', label: 'Safety Score' },
           { key: 'completionRate', label: 'Completion Rate', render: (row) => `${row.completionRate || 0}%` },
-          {
-            key: 'action',
-            label: 'Action',
-            render: (row) => (
-              <Button variant="danger" className="!rounded-xl !px-2.5 !py-1.5" onClick={() => removeDriver(row._id)}>
-                Delete
-              </Button>
-            )
-          }
+          ...(canManageDrivers
+            ? [
+                {
+                  key: 'action',
+                  label: 'Action',
+                  render: (row) => (
+                    <Button variant="danger" className="!rounded-xl !px-2.5 !py-1.5" onClick={() => removeDriver(row._id)}>
+                      Delete
+                    </Button>
+                  )
+                }
+              ]
+            : [])
         ]}
         rows={drivers}
         getRowId={(row) => row._id}

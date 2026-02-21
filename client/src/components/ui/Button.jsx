@@ -3,13 +3,13 @@ import { useState } from 'react';
 
 const variantStyles = {
   primary:
-    'bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/35',
+    'bg-fleet-oxford text-white shadow-lg shadow-fleet-oxford/25 hover:bg-fleet-navy',
   secondary:
-    'border border-slate-300/70 bg-white/70 text-slate-700 hover:bg-white dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-200 dark:hover:bg-slate-900',
+    'border border-fleet-tan bg-fleet-tan/35 text-fleet-navy hover:bg-fleet-tan/50 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-200 dark:hover:bg-slate-900',
   ghost:
     'bg-transparent text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800/70',
   danger:
-    'bg-gradient-to-r from-rose-500 to-red-500 text-white shadow-lg shadow-rose-500/25'
+    'bg-rose-600 text-white shadow-lg shadow-rose-500/25 hover:bg-rose-700'
 };
 
 const Button = ({

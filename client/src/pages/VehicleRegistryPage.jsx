@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import Loader from '../components/Loader';
+import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
@@ -10,10 +11,12 @@ import Table from '../components/ui/Table';
 
 const VehicleRegistryPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const toast = useToast();
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState(null);
+  const canManageVehicles = user?.role === 'Fleet Manager';
 
   const fetchVehicles = async () => {
     setLoading(true);
@@ -56,7 +59,7 @@ const VehicleRegistryPage = () => {
           <h1 className="section-title">Vehicle Registry</h1>
           <p className="section-subtitle">Manage fleet lifecycle and availability</p>
         </div>
-        <Button onClick={() => navigate('/vehicles/create')}>Add Vehicle</Button>
+        {canManageVehicles ? <Button onClick={() => navigate('/vehicles/create')}>Add Vehicle</Button> : null}
       </div>
 
       {loading && <Loader text="Loading vehicles" />}
@@ -71,27 +74,31 @@ const VehicleRegistryPage = () => {
           { key: 'maxLoadCapacity', label: 'Capacity' },
           { key: 'odometer', label: 'Odometer' },
           { key: 'status', label: 'Status', render: (row) => <StatusBadge status={row.status} /> },
-          {
-            key: 'actions',
-            label: 'Actions',
-            render: (row) => (
-              <div className="flex gap-2">
-                <Button variant="secondary" className="!rounded-xl !px-2.5 !py-1.5" onClick={() => toggleOutOfService(row._id)}>
-                  Toggle OOS
-                </Button>
-                <Button variant="danger" className="!rounded-xl !px-2.5 !py-1.5" onClick={() => setDeleteId(row._id)}>
-                  Delete
-                </Button>
-              </div>
-            )
-          }
+          ...(canManageVehicles
+            ? [
+                {
+                  key: 'actions',
+                  label: 'Actions',
+                  render: (row) => (
+                    <div className="flex gap-2">
+                      <Button variant="secondary" className="!rounded-xl !px-2.5 !py-1.5" onClick={() => toggleOutOfService(row._id)}>
+                        Toggle OOS
+                      </Button>
+                      <Button variant="danger" className="!rounded-xl !px-2.5 !py-1.5" onClick={() => setDeleteId(row._id)}>
+                        Delete
+                      </Button>
+                    </div>
+                  )
+                }
+              ]
+            : [])
         ]}
         rows={vehicles}
         getRowId={(row) => row._id}
         searchKeys={['model', 'licensePlate', 'status', 'type']}
       />
 
-      <Modal open={Boolean(deleteId)} onClose={() => setDeleteId(null)} title="Delete vehicle" description="This action cannot be undone.">
+      <Modal open={Boolean(deleteId) && canManageVehicles} onClose={() => setDeleteId(null)} title="Delete vehicle" description="This action cannot be undone.">
         <div className="flex justify-end gap-2">
           <Button variant="secondary" onClick={() => setDeleteId(null)}>
             Cancel

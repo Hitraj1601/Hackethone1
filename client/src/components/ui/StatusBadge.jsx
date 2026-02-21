@@ -1,26 +1,26 @@
 import { motion } from 'framer-motion';
 
 const styles = {
-  Available: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 ring-emerald-500/25',
-  'On Trip': 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-300 ring-indigo-500/25',
+  Available: 'bg-fleet-tan/35 text-fleet-oxford dark:bg-fleet-tan/20 dark:text-fleet-tanVivid ring-fleet-tan/40',
+  'On Trip': 'bg-fleet-oxford/12 text-fleet-oxford dark:bg-fleet-oxford/35 dark:text-fleet-tanVivid ring-fleet-oxford/25',
   'In Shop': 'bg-amber-500/15 text-amber-700 dark:text-amber-300 ring-amber-500/30',
   Suspended: 'bg-rose-500/15 text-rose-700 dark:text-rose-300 ring-rose-500/30',
   'Out of Service': 'bg-slate-500/15 text-slate-700 dark:text-slate-300 ring-slate-400/25',
-  'On Duty': 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 ring-emerald-500/25',
+  'On Duty': 'bg-fleet-tan/35 text-fleet-oxford dark:bg-fleet-tan/20 dark:text-fleet-tanVivid ring-fleet-tan/40',
   'Off Duty': 'bg-slate-500/15 text-slate-700 dark:text-slate-300 ring-slate-400/25',
   Draft: 'bg-slate-500/15 text-slate-700 dark:text-slate-300 ring-slate-400/25',
-  Dispatched: 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-300 ring-indigo-500/25',
-  Completed: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 ring-emerald-500/25',
+  Dispatched: 'bg-fleet-oxford/12 text-fleet-oxford dark:bg-fleet-oxford/35 dark:text-fleet-tanVivid ring-fleet-oxford/25',
+  Completed: 'bg-fleet-tan/35 text-fleet-oxford dark:bg-fleet-tan/20 dark:text-fleet-tanVivid ring-fleet-tan/40',
   Cancelled: 'bg-rose-500/15 text-rose-700 dark:text-rose-300 ring-rose-500/30'
 };
 
 const pulseStyles = {
-  Available: 'before:bg-emerald-400',
-  'On Trip': 'before:bg-indigo-400',
+  Available: 'before:bg-fleet-tan',
+  'On Trip': 'before:bg-fleet-oxford',
   'In Shop': 'before:bg-amber-400',
   Suspended: 'before:bg-rose-500 animate-pulse',
-  Dispatched: 'before:bg-indigo-400',
-  Completed: 'before:bg-emerald-400'
+  Dispatched: 'before:bg-fleet-oxford',
+  Completed: 'before:bg-fleet-tan'
 };
 
 const StatusBadge = ({ status }) => {

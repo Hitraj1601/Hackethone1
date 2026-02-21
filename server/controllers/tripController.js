@@ -32,6 +32,7 @@ const getTrips = asyncHandler(async (req, res) => {
 });
 
 const createTrip = asyncHandler(async (req, res) => {
+  const isManager = req.user?.role === 'Fleet Manager';
   const {
     referenceNo,
     origin,
@@ -60,7 +61,7 @@ const createTrip = asyncHandler(async (req, res) => {
     throw new Error('Cargo weight exceeds vehicle max load capacity');
   }
 
-  if (status === 'Dispatched') {
+  if (status === 'Dispatched' && !isManager) {
     const vehicleError = validateVehicleForDispatch(vehicle);
     const driverError = validateDriverForDispatch(driver);
 
@@ -98,6 +99,8 @@ const createTrip = asyncHandler(async (req, res) => {
 });
 
 const updateTripStatus = asyncHandler(async (req, res) => {
+  const isManager = req.user?.role === 'Fleet Manager';
+  const isDispatcher = req.user?.role === 'Dispatcher';
   const { status, actualDistanceKm } = req.body;
   const trip = await Trip.findById(req.params.id);
 
@@ -116,13 +119,25 @@ const updateTripStatus = asyncHandler(async (req, res) => {
     throw new Error('Vehicle or driver not found');
   }
 
-  if (status === 'Dispatched') {
-    const vehicleError = validateVehicleForDispatch(vehicle);
-    const driverError = validateDriverForDispatch(driver);
+  if (isDispatcher && trip.status === 'Completed') {
+    res.status(403);
+    throw new Error('Dispatcher cannot edit completed trips');
+  }
 
-    if (vehicleError || driverError) {
-      res.status(400);
-      throw new Error(vehicleError || driverError);
+  if (isDispatcher && status === 'Cancelled' && trip.status !== 'Draft') {
+    res.status(403);
+    throw new Error('Dispatcher can cancel only before dispatch');
+  }
+
+  if (status === 'Dispatched') {
+    if (!isManager) {
+      const vehicleError = validateVehicleForDispatch(vehicle);
+      const driverError = validateDriverForDispatch(driver);
+
+      if (vehicleError || driverError) {
+        res.status(400);
+        throw new Error(vehicleError || driverError);
+      }
     }
 
     trip.dispatchedAt = new Date();

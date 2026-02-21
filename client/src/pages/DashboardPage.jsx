@@ -54,7 +54,7 @@ const DashboardPage = () => {
 
   const vehicles = data?.vehicles || [];
   const utilization = Number(data?.kpis?.utilizationRate || 0);
-  const utilizationData = [{ name: 'Utilization', value: utilization, fill: '#6366f1' }];
+  const utilizationData = [{ name: 'Utilization', value: utilization, fill: '#002147' }];
 
   const statusDistribution = useMemo(() => {
     const total = vehicles.length || 1;
@@ -63,8 +63,8 @@ const DashboardPage = () => {
     const inShopCount = vehicles.filter((item) => item.status === 'In Shop').length;
 
     return [
-      { label: 'Available', count: availableCount, progress: Math.round((availableCount / total) * 100), color: 'bg-emerald-500' },
-      { label: 'On Trip', count: onTripCount, progress: Math.round((onTripCount / total) * 100), color: 'bg-indigo-500' },
+      { label: 'Available', count: availableCount, progress: Math.round((availableCount / total) * 100), color: 'bg-fleet-tan' },
+      { label: 'On Trip', count: onTripCount, progress: Math.round((onTripCount / total) * 100), color: 'bg-fleet-oxford' },
       { label: 'In Shop', count: inShopCount, progress: Math.round((inShopCount / total) * 100), color: 'bg-amber-500' }
     ];
   }, [vehicles]);
@@ -93,7 +93,7 @@ const DashboardPage = () => {
                 <p className="text-sm text-slate-500 dark:text-slate-400">{card.label}</p>
                 <AnimatedCounter value={card.value} suffix={card.suffix} />
               </div>
-              <span className="rounded-xl border border-indigo-400/20 bg-indigo-500/10 p-2 text-indigo-600 dark:text-indigo-300">
+              <span className="rounded-xl border border-fleet-tan/70 bg-fleet-tan/30 p-2 text-fleet-oxford dark:border-fleet-tanVivid/60 dark:bg-fleet-oxford/30 dark:text-fleet-tanVivid">
                 <card.icon />
               </span>
             </div>
@@ -134,7 +134,7 @@ const DashboardPage = () => {
               </RadialBarChart>
             </ResponsiveContainer>
           </div>
-          <p className="-mt-1 text-center text-lg font-semibold text-indigo-600 dark:text-indigo-300">{utilization}%</p>
+          <p className="-mt-1 text-center text-lg font-semibold text-fleet-oxford dark:text-fleet-tanVivid">{utilization}%</p>
         </Card>
       </div>
 

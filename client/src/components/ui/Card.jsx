@@ -22,9 +22,9 @@ const Card = ({ children, className = '', glow = false }) => {
       whileHover={{ y: -4 }}
       transition={{ type: 'spring', stiffness: 260, damping: 22 }}
       style={{ transform }}
-      className={`relative rounded-2xl border border-white/60 bg-white/70 p-4 shadow-xl shadow-slate-200/45 backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/65 dark:shadow-black/20 ${className}`}
+      className={`relative rounded-2xl border border-fleet-tan/70 bg-fleet-cream/80 p-4 shadow-xl shadow-fleet-oxford/10 backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/65 dark:shadow-black/20 ${className}`}
     >
-      {glow && <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-500/10 via-fuchsia-500/10 to-cyan-500/10" />}
+      {glow && <div className="pointer-events-none absolute inset-0 rounded-2xl bg-fleet-tan/10 dark:bg-fleet-oxford/15" />}
       <div className="relative">{children}</div>
     </motion.div>
   );

@@ -7,6 +7,7 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import FloatingSelect from '../components/ui/FloatingSelect';
 import Table from '../components/ui/Table';
+import { formatINRCurrency } from '../utils/currency';
 
 const ExpenseFuelPage = () => {
   const navigate = useNavigate();
@@ -70,14 +71,14 @@ const ExpenseFuelPage = () => {
         </div>
         <div>
           <p className="text-sm text-slate-500 dark:text-slate-400">Fuel Cost</p>
-          <p className="mt-2 text-2xl font-semibold text-indigo-600 dark:text-indigo-300">
-            ${costSummary ? costSummary.totalFuelCost.toFixed(2) : '0.00'}
+          <p className="mt-2 text-2xl font-semibold text-fleet-oxford dark:text-fleet-tanVivid">
+            {formatINRCurrency(costSummary ? costSummary.totalFuelCost : 0)}
           </p>
         </div>
         <div>
           <p className="text-sm text-slate-500 dark:text-slate-400">Total Operational Cost</p>
-          <p className="mt-2 text-2xl font-semibold text-emerald-600 dark:text-emerald-300">
-            ${costSummary ? costSummary.totalOperationalCost.toFixed(2) : '0.00'}
+          <p className="mt-2 text-2xl font-semibold text-fleet-oxford dark:text-fleet-tanVivid">
+            {formatINRCurrency(costSummary ? costSummary.totalOperationalCost : 0)}
           </p>
         </div>
       </Card>
@@ -91,7 +92,7 @@ const ExpenseFuelPage = () => {
         columns={[
           { key: 'vehicle', label: 'Vehicle', render: (row) => row.vehicle?.licensePlate || '-' },
           { key: 'liters', label: 'Liters' },
-          { key: 'cost', label: 'Cost', render: (row) => `$${row.cost}` },
+          { key: 'cost', label: 'Cost', render: (row) => formatINRCurrency(row.cost) },
           { key: 'date', label: 'Date', render: (row) => new Date(row.date).toLocaleDateString() }
         ]}
         rows={logs}

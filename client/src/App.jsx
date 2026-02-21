@@ -5,6 +5,7 @@ import Loader from './components/Loader';
 import AppLayout from './layouts/AppLayout';
 
 const LoginPage = lazy(() => import('./pages/LoginPage'));
+const LandingPage = lazy(() => import('./pages/LandingPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const VehicleRegistryPage = lazy(() => import('./pages/VehicleRegistryPage'));
 const VehicleCreatePage = lazy(() => import('./pages/VehicleCreatePage'));
@@ -22,22 +23,37 @@ const App = () => {
   return (
     <Suspense fallback={<div className="p-6"><Loader text="Loading view" /></div>}>
       <Routes>
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
 
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
-            <Route path="/" element={<DashboardPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/vehicles" element={<VehicleRegistryPage />} />
-            <Route path="/vehicles/create" element={<VehicleCreatePage />} />
             <Route path="/trips" element={<TripDispatcherPage />} />
             <Route path="/trips/create" element={<TripCreatePage />} />
+            <Route path="/drivers" element={<DriverManagementPage />} />
+          </Route>
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={['Fleet Manager', 'Safety Officer']} />}>
+          <Route element={<AppLayout />}>
+            <Route path="/vehicles/create" element={<VehicleCreatePage />} />
+            <Route path="/drivers/create" element={<DriverCreatePage />} />
+          </Route>
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={['Fleet Manager', 'Safety Officer', 'Financial Analyst']} />}>
+          <Route element={<AppLayout />}>
             <Route path="/maintenance" element={<MaintenancePage />} />
             <Route path="/maintenance/create" element={<MaintenanceCreatePage />} />
+          </Route>
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={['Fleet Manager', 'Financial Analyst']} />}>
+          <Route element={<AppLayout />}>
             <Route path="/expenses" element={<ExpenseFuelPage />} />
             <Route path="/expenses/create" element={<FuelCreatePage />} />
-            <Route path="/drivers" element={<DriverManagementPage />} />
-            <Route path="/drivers/create" element={<DriverCreatePage />} />
           </Route>
         </Route>
 
@@ -47,7 +63,7 @@ const App = () => {
           </Route>
         </Route>
 
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Suspense>
   );

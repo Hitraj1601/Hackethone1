@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import Loader from '../components/Loader';
+import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import Button from '../components/ui/Button';
 import StatusBadge from '../components/ui/StatusBadge';
@@ -9,6 +10,7 @@ import Table from '../components/ui/Table';
 
 const TripDispatcherPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const toast = useToast();
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -78,7 +80,7 @@ const TripDispatcherPage = () => {
                     Complete
                   </Button>
                 )}
-                {row.status !== 'Completed' && row.status !== 'Cancelled' && (
+                {row.status !== 'Completed' && row.status !== 'Cancelled' && (user?.role === 'Fleet Manager' || row.status === 'Draft') && (
                   <Button variant="danger" className="!rounded-xl !px-2.5 !py-1.5" onClick={() => updateStatus(row._id, 'Cancelled')}>
                     Cancel
                   </Button>

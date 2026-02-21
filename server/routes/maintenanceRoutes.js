@@ -10,7 +10,7 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(protect, getMaintenanceLogs)
+  .get(protect, authorize('Fleet Manager', 'Safety Officer', 'Financial Analyst'), getMaintenanceLogs)
   .post(protect, authorize('Safety Officer', 'Fleet Manager'), createMaintenanceLog);
 
 router.patch('/:id/resolve', protect, authorize('Safety Officer', 'Fleet Manager'), resolveMaintenanceLog);
