@@ -1,32 +1,19 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import Loader from '../components/Loader';
 import { useToast } from '../context/ToastContext';
 import Button from '../components/ui/Button';
-import Card from '../components/ui/Card';
-import FloatingInput from '../components/ui/FloatingInput';
-import FloatingSelect from '../components/ui/FloatingSelect';
 import Modal from '../components/ui/Modal';
 import StatusBadge from '../components/ui/StatusBadge';
 import Table from '../components/ui/Table';
 
-const initialForm = {
-  model: '',
-  type: 'Truck',
-  licensePlate: '',
-  maxLoadCapacity: '',
-  acquisitionCost: '',
-  odometer: ''
-};
-
 const VehicleRegistryPage = () => {
+  const navigate = useNavigate();
   const toast = useToast();
   const [vehicles, setVehicles] = useState([]);
-  const [form, setForm] = useState(initialForm);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState(null);
-  const [formError, setFormError] = useState('');
 
   const fetchVehicles = async () => {
     setLoading(true);
@@ -41,29 +28,6 @@ const VehicleRegistryPage = () => {
   useEffect(() => {
     fetchVehicles();
   }, []);
-
-  const handleCreate = async (event) => {
-    event.preventDefault();
-    if (!form.model || !form.licensePlate || !form.maxLoadCapacity || !form.odometer) {
-      setFormError('Please complete required fields.');
-      return;
-    }
-
-    setFormError('');
-    try {
-      await api.post('/vehicles', {
-        ...form,
-        maxLoadCapacity: Number(form.maxLoadCapacity),
-        acquisitionCost: Number(form.acquisitionCost || 0),
-        odometer: Number(form.odometer)
-      });
-      setForm(initialForm);
-      toast.success('Vehicle created');
-      fetchVehicles();
-    } catch (error) {
-      toast.error(error?.response?.data?.message || 'Failed to create vehicle');
-    }
-  };
 
   const toggleOutOfService = async (vehicleId) => {
     try {
@@ -87,38 +51,13 @@ const VehicleRegistryPage = () => {
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="section-title">Vehicle Registry</h1>
-        <p className="section-subtitle">Manage fleet lifecycle and availability</p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="section-title">Vehicle Registry</h1>
+          <p className="section-subtitle">Manage fleet lifecycle and availability</p>
+        </div>
+        <Button onClick={() => navigate('/vehicles/create')}>Add Vehicle</Button>
       </div>
-
-      <Card>
-        <form onSubmit={handleCreate} className="grid gap-3 md:grid-cols-3">
-          <FloatingInput label="Model" value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value })} />
-          <FloatingSelect label="Type" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
-            <option>Truck</option>
-            <option>Van</option>
-            <option>Pickup</option>
-            <option>Trailer</option>
-            <option>Reefer</option>
-            <option>Other</option>
-          </FloatingSelect>
-          <FloatingInput label="License Plate" value={form.licensePlate} onChange={(e) => setForm({ ...form, licensePlate: e.target.value })} />
-          <FloatingInput type="number" min="1" label="Max Load Capacity" value={form.maxLoadCapacity} onChange={(e) => setForm({ ...form, maxLoadCapacity: e.target.value })} />
-          <FloatingInput type="number" min="0" label="Acquisition Cost" value={form.acquisitionCost} onChange={(e) => setForm({ ...form, acquisitionCost: e.target.value })} />
-          <FloatingInput type="number" min="0" label="Odometer" value={form.odometer} onChange={(e) => setForm({ ...form, odometer: e.target.value })} />
-          <div className="md:col-span-3 flex items-center justify-between">
-            {formError ? (
-              <motion.p initial={{ x: -8 }} animate={{ x: [0, -6, 6, -4, 4, 0] }} className="text-xs text-rose-500">
-                {formError}
-              </motion.p>
-            ) : (
-              <span className="text-xs text-slate-500 dark:text-slate-400">Records sync instantly with backend APIs.</span>
-            )}
-            <Button type="submit">Add Vehicle</Button>
-          </div>
-        </form>
-      </Card>
 
       {loading && <Loader text="Loading vehicles" />}
 

@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 
 const FloatingInput = ({ label, value, onChange, type = 'text', className = '', error, ...props }) => {
-  const active = String(value ?? '').length > 0;
+  const dateLikeTypes = ['date', 'datetime-local', 'time', 'month', 'week'];
+  const active = String(value ?? '').length > 0 || dateLikeTypes.includes(type);
 
   return (
     <div className={`relative ${className}`}>

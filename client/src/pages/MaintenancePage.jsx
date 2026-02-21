@@ -1,40 +1,23 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import Loader from '../components/Loader';
 import { useToast } from '../context/ToastContext';
 import Button from '../components/ui/Button';
-import Card from '../components/ui/Card';
-import FloatingInput from '../components/ui/FloatingInput';
-import FloatingSelect from '../components/ui/FloatingSelect';
 import StatusBadge from '../components/ui/StatusBadge';
 import Table from '../components/ui/Table';
 
-const initialForm = {
-  vehicle: '',
-  serviceType: '',
-  notes: '',
-  cost: '',
-  serviceDate: ''
-};
-
 const MaintenancePage = () => {
+  const navigate = useNavigate();
   const toast = useToast();
   const [logs, setLogs] = useState([]);
-  const [vehicles, setVehicles] = useState([]);
-  const [form, setForm] = useState(initialForm);
   const [loading, setLoading] = useState(true);
-
-  const serviceableVehicles = useMemo(
-    () => vehicles.filter((vehicle) => vehicle.status !== 'On Trip' && vehicle.status !== 'Out of Service'),
-    [vehicles]
-  );
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [logRes, vehicleRes] = await Promise.all([api.get('/maintenance'), api.get('/vehicles')]);
+      const [logRes] = await Promise.all([api.get('/maintenance')]);
       setLogs(logRes.data);
-      setVehicles(vehicleRes.data);
     } finally {
       setLoading(false);
     }
@@ -43,22 +26,6 @@ const MaintenancePage = () => {
   useEffect(() => {
     fetchData();
   }, []);
-
-  const createLog = async (event) => {
-    event.preventDefault();
-    try {
-      await api.post('/maintenance', {
-        ...form,
-        cost: Number(form.cost),
-        serviceDate: new Date(form.serviceDate)
-      });
-      setForm(initialForm);
-      toast.success('Maintenance log created and vehicle moved to shop');
-      fetchData();
-    } catch (error) {
-      toast.error(error?.response?.data?.message || 'Failed to create maintenance log');
-    }
-  };
 
   const resolveLog = async (logId) => {
     try {
@@ -72,30 +39,13 @@ const MaintenancePage = () => {
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="section-title">Maintenance & Service Logs</h1>
-        <p className="section-subtitle">Move vehicles in and out of service workflow</p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="section-title">Maintenance & Service Logs</h1>
+          <p className="section-subtitle">Move vehicles in and out of service workflow</p>
+        </div>
+        <Button onClick={() => navigate('/maintenance/create')}>Add to Service</Button>
       </div>
-
-      <Card>
-        <form onSubmit={createLog} className="grid gap-3 md:grid-cols-3">
-          <FloatingSelect label="Vehicle" value={form.vehicle} onChange={(e) => setForm({ ...form, vehicle: e.target.value })} required>
-            <option value="">Select Vehicle</option>
-            {serviceableVehicles.map((vehicle) => (
-              <option key={vehicle._id} value={vehicle._id}>
-                {vehicle.model} ({vehicle.licensePlate})
-              </option>
-            ))}
-          </FloatingSelect>
-          <FloatingInput label="Service Type" value={form.serviceType} onChange={(e) => setForm({ ...form, serviceType: e.target.value })} required />
-          <FloatingInput type="date" label="Service Date" value={form.serviceDate} onChange={(e) => setForm({ ...form, serviceDate: e.target.value })} required />
-          <FloatingInput type="number" min="0" label="Cost" value={form.cost} onChange={(e) => setForm({ ...form, cost: e.target.value })} required />
-          <FloatingInput className="md:col-span-2" label="Notes" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
-          <div className="flex items-end">
-            <Button className="w-full">Add to Service</Button>
-          </div>
-        </form>
-      </Card>
 
       {loading && <Loader text="Loading maintenance logs" />}
 
