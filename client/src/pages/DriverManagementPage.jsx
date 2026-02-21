@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react';
 import api from '../services/api';
 import Loader from '../components/Loader';
-import StatusPill from '../components/StatusPill';
 import { useToast } from '../context/ToastContext';
+import Button from '../components/ui/Button';
+import Card from '../components/ui/Card';
+import FloatingInput from '../components/ui/FloatingInput';
+import FloatingSelect from '../components/ui/FloatingSelect';
+import StatusBadge from '../components/ui/StatusBadge';
+import Table from '../components/ui/Table';
 
 const initialForm = {
   name: '',
@@ -61,57 +66,53 @@ const DriverManagementPage = () => {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-800">Driver Management</h1>
-        <p className="text-sm text-slate-500">Compliance status, safety score and trip readiness</p>
+        <h1 className="section-title">Driver Management</h1>
+        <p className="section-subtitle">Compliance status, safety score and trip readiness</p>
       </div>
 
-      <form onSubmit={createDriver} className="card grid gap-3 md:grid-cols-3">
-        <input className="input" placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
-        <input className="input" placeholder="License Number" value={form.licenseNumber} onChange={(e) => setForm({ ...form, licenseNumber: e.target.value })} required />
-        <input className="input" type="date" value={form.licenseExpiryDate} onChange={(e) => setForm({ ...form, licenseExpiryDate: e.target.value })} required />
-        <select className="input" value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}>
-          <option>On Duty</option>
-          <option>Off Duty</option>
-          <option>Suspended</option>
-        </select>
-        <input className="input" type="number" min="0" max="100" placeholder="Safety Score" value={form.safetyScore} onChange={(e) => setForm({ ...form, safetyScore: e.target.value })} />
-        <button className="btn-primary">Add Driver</button>
-      </form>
+      <Card>
+        <form onSubmit={createDriver} className="grid gap-3 md:grid-cols-3">
+          <FloatingInput label="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+          <FloatingInput label="License Number" value={form.licenseNumber} onChange={(e) => setForm({ ...form, licenseNumber: e.target.value })} required />
+          <FloatingInput type="date" label="License Expiry" value={form.licenseExpiryDate} onChange={(e) => setForm({ ...form, licenseExpiryDate: e.target.value })} required />
+          <FloatingSelect label="Status" value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}>
+            <option>On Duty</option>
+            <option>Off Duty</option>
+            <option>Suspended</option>
+          </FloatingSelect>
+          <FloatingInput type="number" min="0" max="100" label="Safety Score" value={form.safetyScore} onChange={(e) => setForm({ ...form, safetyScore: e.target.value })} />
+          <div className="flex items-end">
+            <Button className="w-full">Add Driver</Button>
+          </div>
+        </form>
+      </Card>
 
-      {loading ? (
-        <Loader text="Loading drivers" />
-      ) : (
-        <div className="table-wrap">
-          <table className="min-w-full text-sm">
-            <thead className="bg-slate-100 text-left text-slate-600">
-              <tr>
-                <th className="px-4 py-3">Name</th>
-                <th className="px-4 py-3">License Expiry</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Safety Score</th>
-                <th className="px-4 py-3">Completion Rate</th>
-                <th className="px-4 py-3">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {drivers.map((driver) => (
-                <tr key={driver._id} className="border-t border-slate-100 hover:bg-slate-50">
-                  <td className="px-4 py-3">{driver.name}</td>
-                  <td className="px-4 py-3">{new Date(driver.licenseExpiryDate).toLocaleDateString()}</td>
-                  <td className="px-4 py-3"><StatusPill status={driver.status} /></td>
-                  <td className="px-4 py-3">{driver.safetyScore}</td>
-                  <td className="px-4 py-3">{driver.completionRate || 0}%</td>
-                  <td className="px-4 py-3">
-                    <button className="btn-secondary" onClick={() => removeDriver(driver._id)}>
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      {loading && <Loader text="Loading drivers" />}
+
+      <Table
+        title="Driver Roster"
+        description="Safety posture and readiness status"
+        loading={loading}
+        columns={[
+          { key: 'name', label: 'Name' },
+          { key: 'licenseExpiryDate', label: 'License Expiry', render: (row) => new Date(row.licenseExpiryDate).toLocaleDateString() },
+          { key: 'status', label: 'Status', render: (row) => <StatusBadge status={row.status} /> },
+          { key: 'safetyScore', label: 'Safety Score' },
+          { key: 'completionRate', label: 'Completion Rate', render: (row) => `${row.completionRate || 0}%` },
+          {
+            key: 'action',
+            label: 'Action',
+            render: (row) => (
+              <Button variant="danger" className="!rounded-xl !px-2.5 !py-1.5" onClick={() => removeDriver(row._id)}>
+                Delete
+              </Button>
+            )
+          }
+        ]}
+        rows={drivers}
+        getRowId={(row) => row._id}
+        searchKeys={['name', 'licenseNumber', 'status']}
+      />
     </div>
   );
 };
