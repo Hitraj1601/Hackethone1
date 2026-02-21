@@ -2,7 +2,7 @@
 
 FleetFlow is a modular full-stack platform that digitizes fleet operations: vehicle lifecycle, driver compliance, trip dispatching, maintenance, fuel/expense tracking, and ROI analytics.
 
-## 1) Backend (Generated First)
+## 1) Backend ()
 
 Location: `server/`
 
