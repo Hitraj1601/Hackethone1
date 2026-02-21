@@ -91,6 +91,10 @@ Location: `client/`
 ---
 
 ## 4) Setup Instructions
+Clone Repository
+```bash
+https://github.com/Hitraj1601/Hackethone1.git
+```
 
 ### Backend
 ```bash
